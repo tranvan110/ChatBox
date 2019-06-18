@@ -16,7 +16,7 @@ server.listen(PORT, function () {
     console.log("Server address: " + ip.address() + ":" + PORT);
 });
 
-const events = ["AppSent", "heartRate", "temperature", "bt-bom", "bt-update", "tem", "hum", "light", "led", "pump", "win", "btLivingroom", "btBathroom", "btAlarm", "sosCall", "sosSms"];
+const events = ["AppSent", "CmdSent", "heartRate", "temperature", "bt-bom", "bt-update", "tem", "hum", "light", "led", "pump", "win", "btLivingroom", "btBathroom", "btAlarm", "sosCall", "sosSms"];
 
 io.on("connection", function (socket) {
     console.log("Connected");
