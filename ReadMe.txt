@@ -13,14 +13,13 @@ heroku
     @Toilaren1
 
 heroku login -i
-heroku apps:info -a esp8266-server
-heroku ps -a esp8266-server
-heroku ps:restart web -a esp8266-server
-heroku ps:stop web -a esp8266-server
-heroku ps:scale web=1 -a esp8266-server
-heroku open
-heroku logs --tail -a esp8266-server
-heroku logs --tail -a web8266-server
+heroku apps:info -a chatbox-pi
+heroku ps -a chatbox-pi
+heroku ps:restart web -a chatbox-pi
+heroku ps:stop web -a chatbox-pi
+heroku ps:scale web=1 -a chatbox-pi
+heroku open -a chatbox-pi
+heroku logs --tail -a chatbox-pi
 
 //////////////////////////////////////////////////////////////////////////////////
 
