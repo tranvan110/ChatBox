@@ -31,6 +31,7 @@ heroku logs --tail -a chatbox-pi
     git remote -v
     git remote remove origin
     git remote add origin https://github.com/tranvan110/CrossApp.git
+    git rm -r --cached .
     git add .
     git commit -am "initial commit"
     git status
