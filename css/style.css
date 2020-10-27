@@ -1,0 +1,31 @@
+:root {
+	--bar-height: 30px;
+}
+
+/* div,
+label {
+	border: 1px solid red;
+} */
+
+.container {
+	max-width: 600px;
+	background-color: #f0f0f0;
+}
+
+.msg {
+	padding: 1rem;
+	width: 80%;
+	border-radius: 20px;
+	color: white;
+	background-color: #9e9d9d;
+}
+
+.form {
+	width: calc(100% - 30px);
+	margin-top: 1rem;
+}
+
+.btn {
+	width: 100%;
+	margin-top: 1rem;
+}

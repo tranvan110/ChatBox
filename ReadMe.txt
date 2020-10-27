@@ -43,11 +43,11 @@ heroku logs --tail -a chatbox-pi
     cd server
     git init
     
-    git remote add origin https://github.com/tranvan110/esp8266-server.git
+    git remote add heroku https://github.com/tranvan110/esp8266-server.git
     git add .
     git commit -am "initial commit"
-    git pull origin master
-    git push -f origin master
+    git pull heroku master
+    git push -f heroku master
 
     git remote -v
     git remote remove heroku
