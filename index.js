@@ -6,7 +6,7 @@ const dialogflow = require('@google-cloud/dialogflow');
 const uuid = require('uuid');
 const request = require('request');
 const server = express();
-const wss = new Server({server});
+
 require('dotenv').config();
 // console.log(process.env);
 
@@ -25,6 +25,7 @@ const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
 server.use((req, res) => res.sendFile(INDEX, { root: __dirname }));
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+const wss = new Server({ server: server, path: '/' });
 
 wss.on('connection', (ws) => {
 	console.log('Client connected');
