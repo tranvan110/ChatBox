@@ -6,7 +6,7 @@ const dialogflow = require('@google-cloud/dialogflow');
 const uuid = require('uuid');
 const request = require('request');
 const server = express();
-const wss = new Server({ server: server, path: '/foo' });
+const wss = new Server({ server: server, path: '/' });
 require('dotenv').config();
 // console.log(process.env);
 
