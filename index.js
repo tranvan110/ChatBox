@@ -25,7 +25,7 @@ const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
 server.use((req, res) => res.sendFile(INDEX, { root: __dirname }));
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
-const wss = new Server({ server: server, path: '/' });
+const wss = new Server({server});
 
 wss.on('connection', (ws) => {
 	console.log('Client connected');
