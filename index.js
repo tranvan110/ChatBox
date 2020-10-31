@@ -5,6 +5,8 @@ const { Server } = require('ws');
 const dialogflow = require('@google-cloud/dialogflow');
 const uuid = require('uuid');
 const request = require('request');
+const server = express();
+const wss = new Server({ server: server, path: '/foo' });
 require('dotenv').config();
 // console.log(process.env);
 
@@ -21,33 +23,57 @@ const weather = `http://api.weatherstack.com/current?access_key=${apiKey}`;
 const sessionClient = new dialogflow.SessionsClient();
 const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
-const server = express()
-	.use((req, res) => res.sendFile(INDEX, { root: __dirname }))
-	.listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-const wss = new Server({ server });
+server.use((req, res) => res.sendFile(INDEX, { root: __dirname }));
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 wss.on('connection', (ws) => {
 	console.log('Client connected');
-	ws.on('close', () => console.log('Client disconnected'));
+	ws.on('close', () => {
+		console.log('Client disconnected');
+	});
+
+	ws.on('message', function (data, flags) {
+		if (flags.binary) { return; }
+		console.log(data);
+		Dialogflow(data, function (error, weather) {
+			var str = "";
+			if (error) {
+				ws.send('Error');
+			}
+			else {
+				str += `Descriptions: ${weather.weather_descriptions}\n`;
+				str += `Visibility: ${weather.visibility}\n`;
+				str += `Temperature: ${weather.temperature}\n`;
+				str += `Feelslike: ${weather.feelslike}\n`;
+				str += `Humidity: ${weather.humidity}\n`;
+				str += `Pressure: ${weather.pressure}\n`;
+				str += `Wind speed: ${weather.wind_speed}\n`;
+				str += `UV index: ${weather.uv_index}\n`;
+				console.log(str);
+				ws.send(str);
+			}
+		});
+
+		ws.on('close', function () {
+			console.log('Connection closed!');
+		});
+		ws.on('error', function (e) {
+		});
+	});
 });
 
-setInterval(() => {
-	wss.clients.forEach((client) => {
-		client.send(new Date().toTimeString());
-	});
-}, 1000);
+// setInterval(() => {
+// 	wss.clients.forEach((client) => {
+// 		client.send(new Date().toTimeString());
+// 	});
+// }, 1000);
 
-runSample();
-
-async function runSample() {
-
-	// The text query request.
+async function Dialogflow(msg, callback) {
 	const params = {
 		session: sessionPath,
 		queryInput: {
 			text: {
-				text: 'Thời tiết Huế hôm nay thế nào?',
+				text: msg,
 				languageCode: 'en-US',
 			},
 		},
@@ -74,18 +100,12 @@ async function runSample() {
 		var url = encodeURI(`${weather}&query=${city},Vietnam`);
 		console.log(url);
 		request(url, function (error, response, body) {
-			let weather = JSON.parse(body);
-			console.log('location:', weather);
-			console.log('location:', weather.location);
-			console.log('current:', weather.current);
-			console.log('weather_descriptions:', weather.current.weather_descriptions);
-			console.log('temperature:', weather.current.temperature);
-			console.log('feelslike:', weather.current.feelslike);
-			console.log('humidity:', weather.current.humidity);
-			console.log('pressure:', weather.current.pressure);
-			console.log('wind_speed:', weather.current.wind_speed);
-			console.log('uv_index:', weather.current.uv_index);
-			console.log('visibility:', weather.current.visibility);
+			if (error)
+				return callback(error);
+			else
+				return callback(null, JSON.parse(body).current);
 		});
 	}
+
+	return
 }

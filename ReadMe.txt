@@ -23,13 +23,14 @@ heroku logs --tail -a chatbox-pi
 
 //////////////////////////////////////////////////////////////////////////////////
 
-07. User git:
+User git:
     git clone https://github.com/tranvan110/CrossApp.git
     cd CrossApp
-    git init
-
+    
     git remote -v
     git remote remove origin
+
+    git init
     git remote add origin https://github.com/tranvan110/CrossApp.git
     git rm -r --cached .
     git add .
@@ -39,18 +40,18 @@ heroku logs --tail -a chatbox-pi
 
 //////////////////////////////////////////////////////////////////////////////////
 
-08. User heroku:
-    cd server
+User heroku:
+    git remote -v
+    git remote remove heroku
+
     git init
-    
     git remote add heroku https://github.com/tranvan110/esp8266-server.git
     git add .
     git commit -am "initial commit"
     git pull heroku master
     git push -f heroku master
 
-    git remote -v
-    git remote remove heroku
+    
     git remote add heroku https://git.heroku.com/esp8266-server.git
     git remote add heroku https://git.heroku.com/web8266-server.git
     heroku git:remote -a esp8266-server
@@ -59,7 +60,7 @@ heroku logs --tail -a chatbox-pi
     git push -f heroku master
 
 //////////////////////////////////////////////////////////////////////////////////
-01: User nodejs:
+User nodejs:
     npm init
     npm install ws
     npm install express
