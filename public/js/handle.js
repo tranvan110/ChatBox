@@ -1,4 +1,4 @@
-let HOST = location.origin.replace(/^http/, 'ws')
+let HOST = location.origin.replace(/^http/, 'ws') + '/dialog';
 let ws = new WebSocket(HOST);
 
 function BtnHandle() {
@@ -12,7 +12,7 @@ function BtnHandle() {
     document.getElementById("chat").appendChild(div);
 
     ws.send(msg);
-}
+};
 
 ws.onmessage = (event) => {
     var p = document.createElement("p");

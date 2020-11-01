@@ -1,17 +1,20 @@
 'use strict';
 
-const express = require('express');
-const { Server } = require('ws');
-const dialogflow = require('@google-cloud/dialogflow');
-const uuid = require('uuid');
-const request = require('request');
-const server = express();
-
+const PORT = process.env.PORT || 5000;
 require('dotenv').config();
 // console.log(process.env);
 
-const PORT = process.env.PORT || 5000;
-const INDEX = '/index.html';
+const express = require('express');
+const request = require('request');
+const path = require('path');
+const webApp = express();
+
+const dialogflow = require('@google-cloud/dialogflow');
+const uuid = require('uuid');
+const socket = require('ws').Server;
+const server = require('http').createServer(webApp);
+const wss = new socket({server: server, path: '/dialog'});
+server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // A unique identifier for the given session
 const sessionId = uuid.v4();
@@ -23,9 +26,8 @@ const weather = `http://api.weatherstack.com/current?access_key=${apiKey}`;
 const sessionClient = new dialogflow.SessionsClient();
 const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
-server.use((req, res) => res.sendFile(INDEX, { root: __dirname }));
-server.listen(PORT, () => console.log(`Listening on ${PORT}`));
-const wss = new Server({server});
+webApp.use(express.static(path.join(__dirname, 'public')));
+webApp.get('/', (req, res) => res.render('index', { value: null }));
 
 wss.on('connection', (ws) => {
 	console.log('Client connected');
@@ -34,7 +36,7 @@ wss.on('connection', (ws) => {
 	});
 
 	ws.on('message', function (data, flags) {
-		if (flags.binary) { return; }
+		if (flags) { return; }
 		console.log(data);
 		Dialogflow(data, function (error, weather) {
 			var str = "";
@@ -62,12 +64,6 @@ wss.on('connection', (ws) => {
 		});
 	});
 });
-
-setInterval(() => {
-	wss.clients.forEach((client) => {
-		client.send(new Date().toTimeString());
-	});
-}, 1000);
 
 async function Dialogflow(msg, callback) {
 	const params = {

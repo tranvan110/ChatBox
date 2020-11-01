@@ -62,15 +62,17 @@ User heroku:
 //////////////////////////////////////////////////////////////////////////////////
 User nodejs:
     npm init
-    npm install ws
-    npm install express
+    npm install ws --save
+    npm install http --save
+    npm install path --save
+    npm install express --save
 
-    npm install request
-    npm install socket.io
-    npm install ip
+    npm install request --save
+    npm install socket.io --save
+    npm install ip --save
     
-    npm install ejs
-    npm install body-parser
+    npm install ejs --save
+    npm install body-parser --save
     
     npm uninstall ip
     npm uninstall sass
