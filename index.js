@@ -105,9 +105,9 @@ async function Dialogflow(msg, callback) {
 		});
 	}
 	else {
-		// piws.send();
-		var msg = parameters.device.stringValue;
-		console.log(msg);
+		var msg = parameters.action.stringValue + parameters.device.stringValue;
+		piws.send(msg);
+		console.log(`Command: ${msg}`);
 		return callback(null, result.fulfillmentText);
 	}
 
