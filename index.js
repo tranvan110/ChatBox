@@ -76,8 +76,8 @@ async function Dialogflow(msg, callback) {
 	const result = responses[0].queryResult;
 	const parameters = result.parameters.fields;
 
-	console.log(`action: ${result.action}`);
-	console.log(`parameters: ${parameters}`);
+	console.log("action: " + result.action);
+	console.log("parameters: " + parameters);
 
 	if (result.intent) {
 		console.log(`  Intent: ${result.intent.displayName}`);
@@ -106,8 +106,9 @@ async function Dialogflow(msg, callback) {
 	}
 	else {
 		var msg = parameters.action.stringValue + parameters.device.stringValue;
-		piws.send(msg);
 		console.log(`Command: ${msg}`);
+		if (piws)
+			piws.send(msg);
 		return callback(null, result.fulfillmentText);
 	}
 
