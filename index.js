@@ -106,7 +106,8 @@ async function Dialogflow(msg, callback) {
 	}
 	else {
 		// piws.send();
-		// var msg = 
+		var msg = parameters.device.stringValue;
+		console.log(msg);
 		return callback(null, result.fulfillmentText);
 	}
 
