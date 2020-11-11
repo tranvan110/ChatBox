@@ -75,14 +75,13 @@ async function Dialogflow(msg, callback) {
 	const responses = await sessionClient.detectIntent(params);
 	const result = responses[0].queryResult;
 
-	console.log(`Action: ${result.action}`);
-	console.log(result.parameters);
+	console.log(`action: ${result.action}`);
+	console.log(`parameters: ${result.parameters}`);
 
-	console.log('Detected intent');
-	console.log(`  Query: ${result.queryText}`);
-	console.log(`  Response: ${result.fulfillmentText}`);
 	if (result.intent) {
 		console.log(`  Intent: ${result.intent.displayName}`);
+		console.log(`  Query: ${result.queryText}`);
+		console.log(`  Response: ${result.fulfillmentText}`);
 	} else {
 		console.log(`  No intent matched.`);
 	}
@@ -106,6 +105,7 @@ async function Dialogflow(msg, callback) {
 	}
 	else {
 		// piws.send();
+		// var msg = 
 		return callback(null, result.fulfillmentText);
 	}
 
