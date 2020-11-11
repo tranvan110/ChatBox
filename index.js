@@ -87,21 +87,27 @@ async function Dialogflow(msg, callback) {
 	}
 
 	if (result.action == 'input.thoitiet') {
-		var city = result.parameters.fields.City.stringValue;
-		var url = encodeURI(`${weather}&query=${city},Vietnam`);
-		console.log(url);
-		request(url, function (error, response, body) {
-			if (error)
-				return callback(error);
-			else {
-				var weather = JSON.parse(body).current;
-				var msg = `Trạng thái: ${weather.weather_descriptions}, tầm nhìn: ${weather.visibility} Km\n`;
-				msg += `Nhiệt độ: ${weather.temperature} độ, cảm giác như: ${weather.feelslike} độ\n`;
-				msg += `Độ ẩm: ${weather.humidity}%, áp suất không khí: ${weather.pressure}\n`;
-				msg += `Tốc độ gió: ${weather.wind_speed}, chỉ số UV: ${weather.uv_index}\n`;
-				return callback(null, msg);
-			}
-		});
+		if (parameters.City.stringValue == Nha) {
+			console.log("Command: tem?");
+			piws.send("tem?");
+		}
+		else {
+			var city = result.parameters.fields.City.stringValue;
+			var url = encodeURI(`${weather}&query=${city},Vietnam`);
+			console.log(url);
+			request(url, function (error, response, body) {
+				if (error)
+					return callback(error);
+				else {
+					var weather = JSON.parse(body).current;
+					var msg = `Trạng thái: ${weather.weather_descriptions}, tầm nhìn: ${weather.visibility} Km\n`;
+					msg += `Nhiệt độ: ${weather.temperature} độ, cảm giác như: ${weather.feelslike} độ\n`;
+					msg += `Độ ẩm: ${weather.humidity}%, áp suất không khí: ${weather.pressure}\n`;
+					msg += `Tốc độ gió: ${weather.wind_speed}, chỉ số UV: ${weather.uv_index}\n`;
+					return callback(null, msg);
+				}
+			});
+		}
 	}
 	else {
 		var msg = parameters.action.stringValue + parameters.device.stringValue;
