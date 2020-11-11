@@ -13,7 +13,7 @@ const dialogflow = require('@google-cloud/dialogflow');
 const uuid = require('uuid');
 const socket = require('ws').Server;
 const server = require('http').createServer(webApp);
-const wss = new socket({server: server, path: '/dialog'});
+const wss = new socket({ server: server, path: '/dialog' });
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // A unique identifier for the given session
@@ -29,6 +29,8 @@ const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 webApp.use(express.static(path.join(__dirname, 'public')));
 webApp.get('/', (req, res) => res.render('index', { value: null }));
 
+var piws;
+
 wss.on('connection', (ws) => {
 	console.log('Client connected');
 	ws.on('close', () => {
@@ -38,22 +40,15 @@ wss.on('connection', (ws) => {
 	ws.on('message', function (data, flags) {
 		if (flags) { return; }
 		console.log(data);
-		Dialogflow(data, function (error, weather) {
-			var str = "";
+		if (data == "pi_online")
+			piws = ws;
+		Dialogflow(data, function (error, msg) {
 			if (error) {
 				ws.send('Error');
 			}
 			else {
-				str += `Descriptions: ${weather.weather_descriptions}\n`;
-				str += `Visibility: ${weather.visibility}\n`;
-				str += `Temperature: ${weather.temperature}\n`;
-				str += `Feelslike: ${weather.feelslike}\n`;
-				str += `Humidity: ${weather.humidity}\n`;
-				str += `Pressure: ${weather.pressure}\n`;
-				str += `Wind speed: ${weather.wind_speed}\n`;
-				str += `UV index: ${weather.uv_index}\n`;
-				console.log(str);
-				ws.send(str);
+				console.log(msg);
+				ws.send(msg);
 			}
 		});
 
@@ -79,10 +74,9 @@ async function Dialogflow(msg, callback) {
 	// Send request and log result
 	const responses = await sessionClient.detectIntent(params);
 	const result = responses[0].queryResult;
-	const city = result.parameters.fields.City.stringValue;
+
 	console.log(`Action: ${result.action}`);
 	console.log(result.parameters);
-
 
 	console.log('Detected intent');
 	console.log(`  Query: ${result.queryText}`);
@@ -94,14 +88,25 @@ async function Dialogflow(msg, callback) {
 	}
 
 	if (result.action == 'input.thoitiet') {
+		var city = result.parameters.fields.City.stringValue;
 		var url = encodeURI(`${weather}&query=${city},Vietnam`);
 		console.log(url);
 		request(url, function (error, response, body) {
 			if (error)
 				return callback(error);
-			else
-				return callback(null, JSON.parse(body).current);
+			else {
+				var weather = JSON.parse(body).current;
+				var msg = `Trạng thái: ${weather.weather_descriptions}, tầm nhìn: ${weather.visibility} Km\n`;
+				msg += `Nhiệt độ: ${weather.temperature} độ, cảm giác như: ${weather.feelslike} độ\n`;
+				msg += `Độ ẩm: ${weather.humidity}%, áp suất không khí: ${weather.pressure}\n`;
+				msg += `Tốc độ gió: ${weather.wind_speed}, chỉ số UV: ${weather.uv_index}\n`;
+				return callback(null, msg);
+			}
 		});
+	}
+	else {
+		// piws.send();
+		return callback(null, result.fulfillmentText);
 	}
 
 	return
