@@ -74,9 +74,10 @@ async function Dialogflow(msg, callback) {
 	// Send request and log result
 	const responses = await sessionClient.detectIntent(params);
 	const result = responses[0].queryResult;
+	const parameters = result.parameters.fields;
 
 	console.log(`action: ${result.action}`);
-	console.log(`parameters: ${result.parameters}`);
+	console.log(`parameters: ${parameters}`);
 
 	if (result.intent) {
 		console.log(`  Intent: ${result.intent.displayName}`);
