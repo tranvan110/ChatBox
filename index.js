@@ -76,8 +76,7 @@ async function Dialogflow(msg, callback) {
 	const result = responses[0].queryResult;
 	const parameters = result.parameters.fields;
 
-	console.log("action: " + result.action);
-	console.log("parameters: " + parameters);
+	console.log(parameters);
 
 	if (result.intent) {
 		console.log(`  Intent: ${result.intent.displayName}`);
