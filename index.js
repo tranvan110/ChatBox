@@ -125,7 +125,7 @@ async function Dialogflow(msg, socket, callback) {
 		if (socket.readyState == wsocket.OPEN) {
 			console.log(`Command: ${msg}`);
 			socket.send(msg);
+			callback(null, result.fulfillmentText);
 		}
-		callback(null, result.fulfillmentText);
 	}
 }
