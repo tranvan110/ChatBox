@@ -57,7 +57,7 @@ wss.on('connection', (ws) => {
 			});
 		}
 		else {
-			Dialogflow(data, function (error, msg) {
+			Dialogflow(data, piws, function (error, msg) {
 				console.log(msg);
 				if (error) {
 					ws.send('Error');
@@ -70,7 +70,7 @@ wss.on('connection', (ws) => {
 	});
 });
 
-async function Dialogflow(msg, callback) {
+async function Dialogflow(msg, socket, callback) {
 	const params = {
 		session: sessionPath,
 		queryInput: {
@@ -98,34 +98,32 @@ async function Dialogflow(msg, callback) {
 	}
 
 	if (result.action == 'input.thoitiet') {
-		if (parameters.City.stringValue == 'Nha' && piws.readyState === WebSocket.OPEN) {
+		if (parameters.City.stringValue == 'Nha' && socket.readyState === WebSocket.OPEN) {
 			console.log("Command: tem?");
-			piws.send("tem?");
+			socket.send("tem?");
 		}
 		else {
 			var city = result.parameters.fields.City.stringValue;
 			var url = encodeURI(`${weather}&query=${city},Vietnam`);
 			request(url, function (error, response, body) {
 				if (error) {
-					return callback(error);
+					callback(error);
 				}
 				var weather = JSON.parse(body).current;
 				var msg = `Trạng thái: ${weather.weather_descriptions}, tầm nhìn: ${weather.visibility} Km\n`;
 				msg += `Nhiệt độ: ${weather.temperature} độ, cảm giác như: ${weather.feelslike} độ\n`;
 				msg += `Độ ẩm: ${weather.humidity}%, áp suất không khí: ${weather.pressure}\n`;
 				msg += `Tốc độ gió: ${weather.wind_speed}, chỉ số UV: ${weather.uv_index}\n`;
-				return callback(null, msg);
+				callback(null, msg);
 			});
 		}
 	}
 	else {
 		var msg = parameters.action.stringValue + parameters.device.stringValue;
 		console.log(`Command: ${msg}`);
-		if (piws.readyState === WebSocket.OPEN) {
-			piws.send(msg);
+		if (socket.readyState === WebSocket.OPEN) {
+			socket.send(msg);
 		}
-		return callback(null, result.fulfillmentText);
+		callback(null, result.fulfillmentText);
 	}
-
-	return
 }
