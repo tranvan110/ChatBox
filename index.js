@@ -100,7 +100,7 @@ async function Dialogflow(msg, socket, callback) {
 	}
 
 	if (result.action == 'input.thoitiet') {
-		if (parameters.City.stringValue == 'Nha' && socket.readyState == wsocket.OPEN) {
+		if (parameters.City.stringValue == 'Nha' && socket && socket.readyState == wsocket.OPEN) {
 			console.log("Command: tem?");
 			socket.send("tem?");
 		}
@@ -122,7 +122,7 @@ async function Dialogflow(msg, socket, callback) {
 	}
 	else {
 		var msg = parameters.action.stringValue + parameters.device.stringValue;
-		if (socket.readyState == wsocket.OPEN) {
+		if (socket && socket.readyState == wsocket.OPEN) {
 			console.log(`Command: ${msg}`);
 			socket.send(msg);
 			callback(null, result.fulfillmentText);
