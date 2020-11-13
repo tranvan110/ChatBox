@@ -42,14 +42,15 @@ wss.on('connection', (ws) => {
 	});
 
 	ws.on('message', function (data, flags) {
-		console.log(data);
 		if (flags) {
 			return;
 		}
 		if (data == "pi_online") {
+			console.log(data);
 			piws = ws;
 		}
 		else if (ws == piws) {
+			console.log(data);
 			wss.clients.forEach(function each(client) {
 				if (client !== ws && client.readyState === WebSocket.OPEN) {
 					client.send(data);
@@ -57,6 +58,7 @@ wss.on('connection', (ws) => {
 			});
 		}
 		else {
+			console.log(data);
 			Dialogflow(data, piws, function (error, msg) {
 				console.log(msg);
 				if (error) {
