@@ -11,9 +11,9 @@ const webApp = express();
 
 const dialogflow = require('@google-cloud/dialogflow');
 const uuid = require('uuid');
-const socket = require('ws').Server;
+const wsocket = require('ws');
 const server = require('http').createServer(webApp);
-const wss = new socket({ server: server, path: '/dialog' });
+const wss = new wsocket.Server({ server: server, path: '/dialog' });
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // A unique identifier for the given session
@@ -52,7 +52,7 @@ wss.on('connection', (ws) => {
 		else if (ws == piws) {
 			console.log(data);
 			wss.clients.forEach(function each(client) {
-				if (client !== ws && client.readyState === WebSocket.OPEN) {
+				if (client != ws && client.readyState == wsocket.OPEN) {
 					client.send(data);
 				}
 			});
@@ -100,7 +100,7 @@ async function Dialogflow(msg, socket, callback) {
 	}
 
 	if (result.action == 'input.thoitiet') {
-		if (parameters.City.stringValue == 'Nha' && socket.readyState === WebSocket.OPEN) {
+		if (parameters.City.stringValue == 'Nha' && socket.readyState == wsocket.OPEN) {
 			console.log("Command: tem?");
 			socket.send("tem?");
 		}
@@ -122,8 +122,8 @@ async function Dialogflow(msg, socket, callback) {
 	}
 	else {
 		var msg = parameters.action.stringValue + parameters.device.stringValue;
-		console.log(`Command: ${msg}`);
-		if (socket.readyState === WebSocket.OPEN) {
+		if (socket.readyState == wsocket.OPEN) {
+			console.log(`Command: ${msg}`);
 			socket.send(msg);
 		}
 		callback(null, result.fulfillmentText);
